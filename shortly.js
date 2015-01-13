@@ -3,7 +3,6 @@ var util = require('./lib/utility');
 var partials = require('express-partials');
 var bodyParser = require('body-parser');
 
-
 var db = require('./app/config');
 var Users = require('./app/collections/users');
 var User = require('./app/models/user');
@@ -23,25 +22,53 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(__dirname + '/public'));
 
 
-app.get('/', 
+app.get('/',
 function(req, res) {
+  res.render('login');
+});
+
+app.get('/create',
+function(req, res) {
+  console.log(req.session);
   res.render('index');
 });
 
-app.get('/create', 
-function(req, res) {
-  res.render('index');
-});
-
-app.get('/links', 
+app.get('/links',
 function(req, res) {
   Links.reset().fetch().then(function(links) {
     res.send(200, links.models);
   });
 });
 
-app.post('/links', 
+
+//*************************************************************
+app.get('/signup',
 function(req, res) {
+  res.render('signup');
+});
+
+app.post('/signup', function(req, res){
+  var username = req.body.username;
+  var password = req.body.password;
+  console.log(username, password);
+
+  var user = new User({
+    username: username,
+    password: password
+  });
+
+  // user.save().then(function(newUser){
+  //   Users.add(newUser);
+  //   res.send(200, newUser);
+  // });
+
+});
+
+//*************************************************************
+
+app.post('/links',
+function(req, res) {
+  console.log('hello');
   var uri = req.body.url;
 
   if (!util.isValidUrl(uri)) {
